@@ -1,79 +1,81 @@
 cwlVersion: v1.0
 class: CommandLineTool
-label: MuTect
+
+doc: "Mutect 1.1.5"
+
+hints:
+  DockerRequirement:
+    dockerPull: quay.io/opengenomics/mutect
+
 baseCommand: ['python', '/opt/mutect.py']
-requirements:
-  - class: "DockerRequirement"
-    dockerImageId: "mutect:1.1.5"
+
 inputs:
-  - id: "#tumor"
+  tumor:
     type: File
     inputBinding:
       prefix: --input_file:tumor
-    secondaryFiles:
-      - .bai
-  - id: "#normal"
+  normal:
     type: File
     inputBinding:
       prefix: --input_file:normal
-    secondaryFiles:
-      - .bai
-  - id: "#reference"
+  reference:
     type: File
     inputBinding:
       prefix: --reference_sequence
-    secondaryFiles:
-      - .fai
-      - ^.dict
-  - id: "#cosmic"
-    type: File
+  cosmic:
+    type: File?
     inputBinding:
       prefix: --cosmic
-  - id: "#dbsnp"
-    type: File
+  dbsnp:
+    type: File?
     inputBinding:
       prefix: --dbsnp
     secondaryFiles: .tbi
-  - id: "#tumor_lod"
-    type: float
+  tumor_lod:
+    type: float?
     default: 6.3
     inputBinding:
       prefix: --tumor_lod
-  - id: "#initial_tumor_lod"
-    type: float
+  initial_tumor_lod:
+    type: float?
     default: 4.0
     inputBinding:
       prefix: --initial_tumor_lod
-  - id: "#out"
-    type: string
+  ncpus:
+    type: int?
+    inputBinding:
+      position: 2
+      prefix: --ncpus
+  out:
+    type: string?
     default: call_stats.txt
     inputBinding:
       prefix: --out
-  - id: "#coverage_file"
-    type: string
+  coverage_file:
+    type: string?
     default: coverage.wig.txt
     inputBinding:
       prefix: --coverage_file
-  - id: "#vcf"
-    type: string
+  vcf:
+    type: string?
     default: mutations.vcf
     inputBinding:
       prefix: --vcf
 
 outputs:
-  - id: "#coverage"
+  coverage:
     type: File
     outputBinding:
       glob: $(inputs.coverage_file)
 
 
-  - id: "#call_stats"
+  call_stats:
     type: File
     outputBinding:
       glob: $(inputs.out)
 
         
-  - id: "#mutations"
+  mutations:
     type: File
     outputBinding:
       glob: $(inputs.vcf)

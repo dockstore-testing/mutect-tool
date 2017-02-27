@@ -9,8 +9,16 @@ import tempfile
 import vcf
 import argparse
 import logging
+import gzip
 from string import Template
 from multiprocessing import Pool
+
+def gunzip(infile, outfile):
+    inF = gzip.GzipFile(infile, 'rb')
+    s = inF.read()
+    inF.close()
+    with open(outfile, 'wb') as outF:
+        outF.write(s)
 
 def fai_chunk(path, blocksize):
     seq_map = {}
@@ -121,7 +129,10 @@ def run_mutect(args):
 
     ref_seq = os.path.join(workdir, "ref_genome.fasta")
     ref_dict = os.path.join(workdir, "ref_genome.dict")
-    os.symlink(os.path.abspath(args['reference_sequence']), ref_seq)
+    if args['reference_sequence'].endswith('.gz'):
+        gunzip(args['reference_sequence'], ref_seq)
+    else:
+        os.symlink(os.path.abspath(args['reference_sequence']), ref_seq)
     subprocess.check_call( ["/usr/bin/samtools", "faidx", ref_seq] )
     subprocess.check_call( [args['java'], "-jar",
         args['dict_jar'],
