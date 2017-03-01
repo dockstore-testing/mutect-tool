@@ -9,16 +9,17 @@ import tempfile
 import vcf
 import argparse
 import logging
-import gzip
 from string import Template
 from multiprocessing import Pool
 
 def gunzip(infile, outfile):
-    inF = gzip.GzipFile(infile, 'rb')
-    s = inF.read()
-    inF.close()
-    with open(outfile, 'wb') as outF:
-        outF.write(s)
+    cmd = (' ').join(['zcat', infile])
+    with open(outfile, 'w') as outF:
+        p = subprocess.Popen(cmd, shell=True, stdout=outF, stderr=subprocess.PIPE)
+    stdout,stderr =  p.communicate()
+    if len(stderr):
+        print "unzip command failed:", stderr
+        raise Exception("unzip failed")
 
 def fai_chunk(path, blocksize):
     seq_map = {}
