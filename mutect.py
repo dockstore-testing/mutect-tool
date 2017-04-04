@@ -13,7 +13,7 @@ from string import Template
 from multiprocessing import Pool
 
 def gunzip(infile, outfile):
-    cmd = (' ').join(['zcat', infile])
+    cmd = ' '.join(['zcat', infile])
     with open(outfile, 'w') as outF:
         p = subprocess.Popen(cmd, shell=True, stdout=outF, stderr=subprocess.PIPE)
     stdout,stderr =  p.communicate()
