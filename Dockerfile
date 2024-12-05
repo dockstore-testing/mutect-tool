@@ -1,12 +1,11 @@
-
-FROM java:7
+FROM eclipse-temurin:11.0.12_7-jdk
 
 RUN apt-get update
 RUN apt-get install -y zip wget
 #
 # Install samtools and the python vcf libraries for wrapper code
 #
-RUN apt-get install -y samtools python-pip
+RUN apt-get install -y samtools python3-pip
 RUN pip install PyVCF
 
 # We'll be working in /opt from now on
